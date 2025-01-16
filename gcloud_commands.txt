@@ -1,0 +1,7 @@
+gcloud functions deploy data-ingestion-function \
+--gen2 \
+--region=europe-west2 \
+--runtime=python312 \
+--source=/Users/max.abimbola/Code/revised-capstone/a_data_ingestion/cloud_functions \
+--entry-point=load_to_bq \
+--trigger-bucket=landing-zone-used-car-data

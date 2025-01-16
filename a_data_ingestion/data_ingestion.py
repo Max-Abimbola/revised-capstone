@@ -56,7 +56,7 @@ def upload_csv_to_storage_blob():
         logging.info('Successfully uploaded csv to storage bucket')
 
     except Exception as e:
-        logging.info(f"{e}")
+        logging.info(f"Bucket already exists. Loading data...")
 
         bucket = storage_client.bucket('landing-zone-used-car-data')
 
@@ -131,7 +131,6 @@ def upload_blob_to_bigquery(project_id, bucket_name, destination_file, table_id,
 def main():
     download_kaggle_dataset()
     upload_csv_to_storage_blob()
-    # upload_blob_to_bigquery('dt-maxa-sandbox-dev','landing-zone-used-car-data','raw-used-car-data','dt-maxa-sandbox-dev.uncleaned_data.raw_used_car_data','dt-maxa-sandbox-dev.uncleaned_data')
 
 if __name__ == '__main__':
     main()

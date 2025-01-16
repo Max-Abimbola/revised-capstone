@@ -1,0 +1,4 @@
+gcloud dataplex datascans create data-quality used-car-dq-scan \
+--location=europe-west2 \
+--data-quality-spec-file=gs://landing-zone-used-car-data/data_quality_rules.json \
+--data-source-resource=//bigquery.googleapis.com/projects/dt-maxa-sandbox-dev/datasets/uncleaned_data/tables/raw_car_data

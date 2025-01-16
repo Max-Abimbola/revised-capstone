@@ -9,7 +9,7 @@ terraform {
     google-beta = {
       version = "~> 6.12.0"
     }
-  }
+}
 
 
 
@@ -17,14 +17,82 @@ terraform {
 
 resource "google_storage_bucket" "static" {
   name                        = "landing-zone-used-car-data"
-  location                    =  var.location
+  location                    = var.location
   storage_class               = "STANDARD"
-  project                     =  var.project_id
+  project                     = var.project_id
   uniform_bucket_level_access = true
 }
 
 resource "google_bigquery_dataset" "dataset" {
   dataset_id = "uncleaned_data"
-  location = var.location
-  project = var.project_id
+  location   = var.location
+  project    = var.project_id
+}
+
+resource "google_artifact_registry_repository" "cloud-functions-repo" {
+  location      = var.location
+  repository_id = var.cf_artifact_registry_repository_id
+  description   = "repository holding all cloud function images"
+  format        = "DOCKER"
+  project       = var.project_id
+}
+
+resource "google_dataplex_datascan" "full_quality" {
+  location     = var.location
+  project      = var.project_id
+  data_scan_id = "dataprofile-full"
+
+  data {
+    resource = "//bigquery.googleapis.com/projects/dt-maxa-sandbox-dev/datasets/uncleaned_data/tables/raw_car_data"
+  }
+
+  execution_spec {
+    trigger {
+      on_demand {}
+    }
+  }
+
+  data_quality_spec {
+
+    rules {
+      column = "cylinders"
+      name = "example"
+      dimension = "COMPLETENESS"
+      threshold = 1
+      non_null_expectation {}
+  }
+
+    rules {
+      column    = "VIN"
+      dimension = "UNIQUENESS"
+      threshold = 1
+      non_null_expectation {}
+    }
+    
+    rules {
+      column    = "VIN"
+      dimension = "VALIDITY"
+      threshold = 1
+      row_condition_expectation {
+        sql_expression = "LENGTH(VIN)=17"
+      }
+    }
+
+    rules {
+      column      = "price"
+      ignore_null = true
+      dimension   = "VALIDITY"
+      threshold   = 1
+      range_expectation {
+        min_value = "5000"
+        max_value = "100000"
+      }
+
+
+    }
+
+  }
+
+
+
 }
