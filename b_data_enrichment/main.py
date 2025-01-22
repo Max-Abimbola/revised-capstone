@@ -3,6 +3,14 @@ from google.cloud import storage
 import requests
 import math
 import os
+import pandas as pd
+import io
+import google.cloud.exceptions
+import logging
+import csv
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO) 
 
 def return_extracted_vins():
     client = bigquery.Client(project="dt-maxa-sandbox-dev")
@@ -48,6 +56,10 @@ def return_updated_values(batch_vin_list):
     return(new_values_dict)
 
 def write_updated_values_to_csv(total_tasks, task_id):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket('landing-zone-used-car-data')
+    blob = bucket.blob('used-card-data-enriched.csv')
+
     print(task_id)
     vin_list = return_extracted_vins()[:301]
 
@@ -62,24 +74,61 @@ def write_updated_values_to_csv(total_tasks, task_id):
     print(f"I'm processing from {start}-{end}")
     print(f"I'm processing {len(curr_job_vin_list)} VINs")
 
-    return
-
     # curr_job_vin_list = vin_list[task_id*curr_job_vin_batch_size:(task_id*curr_job_vin_batch_size)+(curr_job_vin_batch_size-1)]
 
-    while len(vin_list) != 0:
-        batch_vin_list = curr_job_vin_list[0:min(50,len(vin_list))]
-
-        curr_job_vin_list = curr_job_vin_list[min(50,len(vin_list)):]
+    while len(curr_job_vin_list) != 0:
+        batch_vin_list = curr_job_vin_list[0:min(50,len(curr_job_vin_list))]
 
         updated_values = return_updated_values(batch_vin_list)
 
-        print(updated_values)
+        curr_job_vin_list = curr_job_vin_list[min(50,len(curr_job_vin_list)):]
+
+        print(f"curr_job_vin_list size {len(curr_job_vin_list)}")
+
+        updated_values_df = pd.DataFrame(updated_values)
+        updated_values_csv = updated_values_df.to_csv()
+
+        try:
+            # First, try to download existing content
+            try:
+                existing_content = blob.download_as_text()
+            except google.cloud.exceptions.NotFound:
+                existing_content = ""
+        
+
+            # Combine existing and new content
+            combined_content = existing_content
+            if existing_content and not existing_content.endswith('\n'):
+                combined_content += '\n'
+            
+            # Convert new rows to CSV string
+
+            # output = io.StringIO()
+            # csv_writer = csv.writer(output)
+            # print(updated_values)
+            # csv_writer.writerows(updated_values_csv)
+            # combined_content += output.getvalue()
+            
+            # Upload with atomic write using generation and metageneration
+            generation_match_precondition = 0 if not existing_content else None
+            blob.upload_from_string(
+                updated_values_csv, 
+                if_generation_match=generation_match_precondition
+            )
+            return
+        
+        except google.cloud.exceptions.Conflict:
+            # This occurs if the file was modified between read and write
+            logging.warning(f"Concurrent write detected for task {task_id}. Skipping this batch.")
+        except Exception as e:
+            logging.error(f"Error in task {task_id}: {str(e)}")
+            raise
 
 
 def main():
     total_tasks = 3
-    task_id = int(os.environ.get('CLOUD_RUN_TASK_INDEX'))
-    write_updated_values_to_csv(total_tasks,task_id)
+    # task_id = int(os.environ.get('CLOUD_RUN_TASK_INDEX'))
+    write_updated_values_to_csv(total_tasks,task_id=1)
 
     
 
