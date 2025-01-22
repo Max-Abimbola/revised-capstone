@@ -51,14 +51,18 @@ def write_updated_values_to_csv(total_tasks, task_id):
     print(task_id)
     vin_list = return_extracted_vins()[:301]
 
-    curr_job_vin_batch_size = math.floor(len(vin_list)/total_tasks)
+    curr_job_vin_batch_size = math.ceil(len(vin_list)/total_tasks)
 
     start = (task_id)*curr_job_vin_batch_size
     end = min(len(vin_list),start+curr_job_vin_batch_size) 
 
     curr_job_vin_list = vin_list[start:end]
 
-    print(f"I'm processing from {start}-{end-1}")
+    print(f"Length of vin list is {len(vin_list)}")
+    print(f"I'm processing from {start}-{end}")
+    print(f"I'm processing {len(curr_job_vin_list)} VINs")
+
+    return
 
     # curr_job_vin_list = vin_list[task_id*curr_job_vin_batch_size:(task_id*curr_job_vin_batch_size)+(curr_job_vin_batch_size-1)]
 
