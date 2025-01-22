@@ -2,7 +2,7 @@ from google.cloud import bigquery
 from google.cloud import storage
 import requests
 import math
-
+import os
 
 def return_extracted_vins():
     client = bigquery.Client(project="dt-maxa-sandbox-dev")
@@ -24,8 +24,12 @@ def return_extracted_vins():
     vin_list = csv_string.split('\n')[2:]
     return vin_list
 
-def return_updated_values(delimitted_vin_list):
-    url = f'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVINValuesBatch/1C6RR6FG0JS259587;5TFCZ5AN0KX185798'
+
+def return_updated_values(batch_vin_list):
+
+    delimitted_vin_list = ';'.join(batch_vin_list)
+
+    url = f'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVINValuesBatch/'
     post_fields = {'format': 'json', 'data':delimitted_vin_list}
     r = requests.post(url, data=post_fields)
     response_dict = dict(r.json())['Results']
@@ -43,18 +47,35 @@ def return_updated_values(delimitted_vin_list):
         new_values_dict.append(curr_val)
     return(new_values_dict)
 
+def write_updated_values_to_csv(total_tasks, task_id):
+    print(task_id)
+    vin_list = return_extracted_vins()[:301]
 
+    curr_job_vin_batch_size = math.floor(len(vin_list)/total_tasks)
+
+    start = (task_id)*curr_job_vin_batch_size
+    end = min(len(vin_list),start+curr_job_vin_batch_size) 
+
+    curr_job_vin_list = vin_list[start:end]
+
+    print(f"I'm processing from {start}-{end-1}")
+
+    # curr_job_vin_list = vin_list[task_id*curr_job_vin_batch_size:(task_id*curr_job_vin_batch_size)+(curr_job_vin_batch_size-1)]
+
+    while len(vin_list) != 0:
+        batch_vin_list = curr_job_vin_list[0:min(50,len(vin_list))]
+
+        curr_job_vin_list = curr_job_vin_list[min(50,len(vin_list)):]
+
+        updated_values = return_updated_values(batch_vin_list)
+
+        print(updated_values)
 
 
 def main():
-    vin_list = return_extracted_vins()[:156]
-
-    while len(vin_list) != 0:
-        batch_vin_list = vin_list[0:min(50,len(vin_list))]
-
-        vin_list = vin_list[min(50,len(vin_list)):]
-
-        # updated_values = return_updated_values(delimitted_vin_list)
+    total_tasks = 3
+    task_id = int(os.environ.get('CLOUD_RUN_TASK_INDEX'))
+    write_updated_values_to_csv(total_tasks,task_id)
 
     
 
