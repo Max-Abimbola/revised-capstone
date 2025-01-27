@@ -63,11 +63,12 @@ def return_updated_values(batch_vin_list):
     return(new_values_list)
 
 def write_updated_values_to_csv(total_tasks, task_id):
+
     storage_client = storage.Client()
     bucket = storage_client.bucket('landing-zone-used-car-data')
     blob = bucket.blob('used-card-data-enriched.csv')
 
-    vin_list = return_extracted_vins()[:1000]
+    vin_list = return_extracted_vins()
 
     curr_job_vin_batch_size = math.ceil(len(vin_list)/total_tasks)
 
@@ -81,30 +82,20 @@ def write_updated_values_to_csv(total_tasks, task_id):
     print(f"I'm processing {len(curr_job_vin_list)} VINs")
 
     # curr_job_vin_list = vin_list[task_id*curr_job_vin_batch_size:(task_id*curr_job_vin_batch_size)+(curr_job_vin_batch_size-1)]
+
+    output = io.StringIO()
+
     while len(curr_job_vin_list) != 0:
         batch_vin_list = curr_job_vin_list[0:min(50,len(curr_job_vin_list))]
-
-        # updated_values = return_updated_values(batch_vin_list)
-
-        # curr_job_vin_list = curr_job_vin_list[min(50,len(curr_job_vin_list)):]
-
-        # print(f"curr_job_vin_list size {len(curr_job_vin_list)}")
-
-        # updated_values_df = pd.DataFrame(updated_values)
-
-        # batch_vin_list = curr_job_vin_list[0:min(50,len(vin_list))]
 
         updated_values = return_updated_values(batch_vin_list)
 
         curr_job_vin_list = curr_job_vin_list[min(50,len(curr_job_vin_list)):]
 
         print(f"curr_job_vin_list size {len(curr_job_vin_list)}")
-
-        output = io.StringIO()
+        
         csv_writer = csv.writer(output)
         csv_writer.writerows(updated_values)
-
-        # updated_values_df = pd.DataFrame(updated_values)
 
     try:
         # First, try to download existing content
@@ -120,7 +111,6 @@ def write_updated_values_to_csv(total_tasks, task_id):
 
         combined_content = existing_content + output.getvalue()
 
-        print('combined_content:', combined_content)
 
         # Upload with atomic write using generation and metageneration
 
@@ -140,7 +130,7 @@ def write_updated_values_to_csv(total_tasks, task_id):
 
 
 def main():
-    total_tasks = 4
+    total_tasks = 50
     task_id = int(os.environ.get('CLOUD_RUN_TASK_INDEX'))
     write_updated_values_to_csv(total_tasks,task_id)
 
