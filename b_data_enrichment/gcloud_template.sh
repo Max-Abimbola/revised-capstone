@@ -22,9 +22,8 @@ gcloud run jobs deploy data-enrichment \
     --command='python','main.py' \
     --project=dt-maxa-sandbox-dev \
     --service-account=max-dev@dt-maxa-sandbox-dev.iam.gserviceaccount.com \
-    --tasks=3 \
-    # --task-timeout=[] \
-    # --max-retries=3 \
+    --tasks=4 \
+    --max-retries=6 \
 
     # --set-env-vars=PROJECT_ID=dt-maxa-sandbox-dev,BUCKET_NAME=[BUCKET_NAME],REGION=europe-west2,DATASET_ID=[DATASET_ID],DESTINATION_TABLE_ID=[DESTINATION_TABLE_ID] \
 
