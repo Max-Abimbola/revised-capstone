@@ -13,6 +13,13 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO) 
 
 def return_extracted_vins():
+    """
+    This function extracts a list of VINs from BigQuery table 'raw_car_data'
+    that have null values in specific columns
+
+    Returns:
+        list: A list of VINs extracted from the BigQuery table
+    """
     client = bigquery.Client(project="dt-maxa-sandbox-dev")
     query = """
                 SELECT distinct VIN FROM `dt-maxa-sandbox-dev.uncleaned_data.raw_car_data`
@@ -34,7 +41,17 @@ def return_extracted_vins():
 
 
 def return_updated_values(batch_vin_list):
+    """
+    This function takes a batch of VINs and retrieves their corresponding
+    vehicle data (cylinders, drive type, fuel type, make, vehicle type)
+    from the NHTSA vpic api
 
+    Args:
+        batch_vin_list: A list of VINs to query the NHTSA vpic api
+
+    Returns:
+        list: A list of dictionaries containing VIN and vehicle data
+    """
     delimitted_vin_list = ';'.join(batch_vin_list)
 
     url = f'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVINValuesBatch/'
@@ -63,7 +80,17 @@ def return_updated_values(batch_vin_list):
     return(new_values_list)
 
 def write_updated_values_to_csv(total_tasks, task_id):
+    """
+    This function writes enriched car data (VIN, cylinders, drive type, fuel type, make, vehicle type)
+    to a CSV file in Google Cloud Storage in a batched manner with chunking and error handling.
 
+    Args:
+        total_tasks: The total number of tasks that will be processing the data in parallel
+        task_id: The ID of the current task
+
+    Raises:
+        Exception: An exception if there is an error during the processing
+    """
     storage_client = storage.Client()
     bucket = storage_client.bucket('landing-zone-used-car-data')
     blob = bucket.blob('used-card-data-enriched.csv')
@@ -130,7 +157,15 @@ def write_updated_values_to_csv(total_tasks, task_id):
 
 
 def main():
-    total_tasks = 50
+    """
+    The main function that orchestrates the data enrichment process.
+    It kicks off the write_updated_values_to_csv function with 
+    the total number of tasks and the current task ID.
+
+    Raises:
+        Exception: An exception if there is an error during the processing
+    """
+    total_tasks = 25
     task_id = int(os.environ.get('CLOUD_RUN_TASK_INDEX'))
     write_updated_values_to_csv(total_tasks,task_id)
 
