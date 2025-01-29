@@ -69,12 +69,6 @@ def return_updated_values(batch_vin_list):
             vin.get('Make',''),
             vin.get('VehicleType','')
         ]
-        # curr_val['VIN'] = vin.get('VIN')
-        # curr_val['cylinders'] = vin.get('EngineCylinders','')
-        # curr_val['drive'] = vin.get('DriveType','')
-        # curr_val['fuel_type'] = vin.get('FuelTypePrimary','')
-        # curr_val['make'] = vin.get('Make','')
-        # curr_val['vehicle_type'] = vin.get('VehicleType','')
         
         new_values_list.append(curr_val)
     return(new_values_list)
@@ -108,7 +102,6 @@ def write_updated_values_to_csv(total_tasks, task_id):
     print(f"task {task_id} processing from {start}-{end}")
     print(f"I'm processing {len(curr_job_vin_list)} VINs")
 
-    # curr_job_vin_list = vin_list[task_id*curr_job_vin_batch_size:(task_id*curr_job_vin_batch_size)+(curr_job_vin_batch_size-1)]
 
     output = io.StringIO()
 
@@ -155,6 +148,32 @@ def write_updated_values_to_csv(total_tasks, task_id):
         logging.error(f"Error in task {task_id}: {str(e)}")
         raise
 
+
+def create_materialised_view(dataset_id, view_name, table1, table2, project_ID ="dt-grad-emea1-cap-dev"):
+    try:
+        client = bigquery.Client(project=project_ID)
+
+        sql_t = f"""
+        CREATE OR REPLACE MATERIALIZED VIEW `{dataset_id}.{view_name}` AS
+        SELECT 
+        t1.id,
+        t2.model AS model,
+        t1.url, t1.region, t1.region_url, t1.price, t1.year, t1.manufacturer, t1.cylinders, 
+        t1.condition, t1.fuel, t1.odometer, t1.title_status, t1.transmission, t1.VIN,
+        t1.drive, t1.size, t1.type, t1.paint_color, t1.image_url, t1.description, 
+        t1.county, t1.state, t1.lat, t1.long, t1.posting_date
+        FROM `{table1}` t1
+        LEFT JOIN `{table2}` t2
+        ON t1.VIN = t2.VIN  
+        """
+
+        query_job = client.query(sql_t)
+        query_job.result()
+
+        print(f"Materialized view `{view_name}` created successfully.")
+
+    except Exception as e:
+        print(f"Error creating materialized view: {e}")
 
 def main():
     """

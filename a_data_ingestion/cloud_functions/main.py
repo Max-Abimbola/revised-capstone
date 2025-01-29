@@ -1,6 +1,7 @@
 import functions_framework
 import logging
 from google.cloud import bigquery
+
 logging.basicConfig(level = logging.INFO)
 client = bigquery.Client()
 
@@ -38,7 +39,6 @@ table_id = "dt-maxa-sandbox-dev.uncleaned_data.raw_car_data"
 # Triggered by a change in a storage bucket
 @functions_framework.cloud_event
 def load_to_bq(cloud_event):
-    print('SANITY CHECKKK')
     data = cloud_event.data
 
     event_id = cloud_event["id"]
@@ -72,4 +72,3 @@ def load_to_bq(cloud_event):
     load_job.result()
 
     logging.info('Successfully loaded csv to bigquery')
-    print("Succcess???")

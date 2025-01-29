@@ -17,3 +17,8 @@ variable "cf_artifact_registry_repository_id" {
   type    = string
   default = "cloud-function-repo"
 }
+
+variable "cr_artifact_registry_repository_id" {
+  type    = string
+  default = "cloud-run-repo"
+}

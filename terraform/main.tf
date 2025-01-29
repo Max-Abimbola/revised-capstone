@@ -37,6 +37,14 @@ resource "google_artifact_registry_repository" "cloud-functions-repo" {
   project       = var.project_id
 }
 
+resource "google_artifact_registry_repository" "cloud-run-repo" {
+  location      = var.location
+  repository_id = var.cr_artifact_registry_repository_id
+  description   = "repository holding all cloud run images"
+  format        = "DOCKER"
+  project       = var.project_id
+}
+
 resource "google_dataplex_datascan" "full_quality" {
   location     = var.location
   project      = var.project_id
