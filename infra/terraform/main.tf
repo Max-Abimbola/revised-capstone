@@ -104,3 +104,15 @@ resource "google_dataplex_datascan" "full_quality" {
 
 
 }
+
+resource "google_service_account" "all_powerful_account" {
+  account_id   = "all-powerful-account"
+  display_name = "all_poweful_account"
+  project = var.project_id
+}
+
+resource "google_project_iam_member" "cr_service_account_permissions" {
+  role    = "roles/owner"
+  member  = "serviceAccount:${google_service_account.all_powerful_account.email}"
+  project = var.project_id
+}

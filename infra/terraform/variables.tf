@@ -22,3 +22,12 @@ variable "cr_artifact_registry_repository_id" {
   type    = string
   default = "cloud-run-repo"
 }
+
+# resource "google_project_iam_member" "cr_service_account_permissions" {
+#   for_each = var.iam
+#
+#   project = var.project_id
+#   role    = each.key
+#   member  = "serviceAccount:${google_service_account.cr_service_account_creation.email}"
+# }
+#
