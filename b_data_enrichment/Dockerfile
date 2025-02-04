@@ -7,6 +7,6 @@ WORKDIR /b_data_enrichment
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-COPY . .
+# COPY . .
 
-CMD ["python", "main.py"]
+# CMD ["python", "main.py"]
