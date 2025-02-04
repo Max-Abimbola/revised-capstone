@@ -7,5 +7,7 @@ images:
 - 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1'
 options:
   logging:
-    cloudLogging: CLOUD_LOGGING_ONLY 
+    cloudLogging: 
+      entries:
+        - CLOUD_LOGGING_ONLY
   serviceAccount: 'all-powerful-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com'
