@@ -7,8 +7,4 @@ images:
 - 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1'
 serviceAccount: projects/dt-maxa-sandbox-dev/serviceAccounts/all-powerful-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com
 options:
-  logging:
-    cloudLogging:
-      entries:
-      - CLOUD_LOGGING_ONLY
-  logsBucket: 'landing-zone-used-car-data'
+  logging: CLOUD_LOGGING_ONLY
