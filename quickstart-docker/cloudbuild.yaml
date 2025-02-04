@@ -1,8 +1,6 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  script: |
-    docker build -t europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1 .
-  automapSubstitutions: true
+  args: ['build', '-t', 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1', '.']
 images:
 - 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1'
 serviceAccount: projects/dt-maxa-sandbox-dev/serviceAccounts/all-powerful-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com
