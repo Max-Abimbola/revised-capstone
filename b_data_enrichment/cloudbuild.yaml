@@ -1,0 +1,9 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/cloud-run-repo/data-enrichment:latest']
+  dir: '.'
+images:
+- 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/cloud-run-repo/data-enrichment:latest'
+serviceAccount: projects/dt-maxa-sandbox-dev/serviceAccounts/all-powerful-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com
+options:
+  logging: CLOUD_LOGGING_ONLY
