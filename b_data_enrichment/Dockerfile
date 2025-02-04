@@ -4,7 +4,7 @@ FROM python:3.12
 
 WORKDIR /b_data_enrichment
 
-COPY requirements.txt requirements.txt
+# COPY . requirements.txt
 RUN pip install -r requirements.txt
 
 # COPY . .
