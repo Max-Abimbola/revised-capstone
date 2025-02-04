@@ -1,6 +1,6 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  dir: '.'
+  dir: 'b_data_enrichment'
   args: ['build', '-t', 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/cloud-run-repo/data-enrichment:latest','.','-f', 'b_data_enrichment/Dockerfile', '.']
 images:
 - 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/cloud-run-repo/data-enrichment:latest'
