@@ -4,7 +4,7 @@ FROM python:3.11-slim
 
 WORKDIR /b_data_enrichment
 
-COPY requirements.txt .
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
