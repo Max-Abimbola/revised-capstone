@@ -1,14 +1,5 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
+- name: 'ubuntu'
   script: |
-    docker build -t europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1 .
-  automapSubstitutions: true
-images:
-- 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1'
-options:
-  logging: # Two-space indentation
-    cloudLogging: # Two-space indentation
-      entries:  # Two-space indentation
-      - CLOUD_LOGGING_ONLY # Four-space indentation
-  serviceAccount: 'cr-service-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com' # Two-space indentation
-  logsBucket: 'landing-zone-used-car-data' # Two-space indentation
+    echo "Hello, world!"
+
