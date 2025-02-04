@@ -8,4 +8,4 @@ images:
 options:
   logging:
     cloudLogging: CLOUD_LOGGING_ONLY 
-  serviceAccount: 'cr-service-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com'
+  serviceAccount: 'all-powerful-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com'
