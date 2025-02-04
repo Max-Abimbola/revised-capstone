@@ -4,8 +4,8 @@ FROM python:3.12
 
 WORKDIR /b_data_enrichment
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
 COPY . .
 
