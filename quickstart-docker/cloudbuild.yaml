@@ -1,3 +1,12 @@
 steps:
-- name: 'ubuntu'
-  script: echo "Hello, world!"
+- name: 'gcr.io/cloud-builders/docker'
+  script: |
+    docker build -t europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1 .
+  automapSubstitutions: true
+images:
+- 'europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1'
+options:
+  logging:
+    cloudLogging: CLOUD_LOGGING_ONLY 
+  serviceAccount: 'cr-service-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com'
+  logsBucket: 'landing-zone-used-car-data' 
