@@ -1,12 +1,12 @@
-FROM python:3.12
+FROM python:3.11-slim
 
 # Specifying ENV variable for URI in Cloud Run instead of Dockerfile
 
 WORKDIR /b_data_enrichment
 
-# COPY . requirements.txt
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# COPY . .
+COPY main.py .
 
-# CMD ["python", "main.py"]
+CMD ["python", "main.py"]
