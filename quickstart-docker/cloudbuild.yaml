@@ -1,14 +1,6 @@
 ---
 steps:
-  - name: gcr.io/cloud-builders/docker
-    args:
-      - docker
-      - build
-      - -t
-      - europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1
-        .
-images:
-  - europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/quickstart-docker-repo/quickstart-image:tag1
+
 options:
   serviceAccount: all-powerful-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com
  
