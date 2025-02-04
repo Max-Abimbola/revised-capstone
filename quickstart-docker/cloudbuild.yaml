@@ -2,4 +2,10 @@ steps:
 - name: 'ubuntu'
   script: |
     echo "Hello, world!"
-
+options:
+  logging:
+    cloudLogging:
+      entries:
+      - CLOUD_LOGGING_ONLY
+  serviceAccount: 'cr-service-account@dt-maxa-sandbox-dev.iam.gserviceaccount.com'
+  logsBucket: 'landing-zone-used-car-data'
