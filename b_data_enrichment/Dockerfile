@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12
 
 # Specifying ENV variable for URI in Cloud Run instead of Dockerfile
 
