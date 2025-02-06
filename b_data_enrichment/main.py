@@ -41,7 +41,7 @@ def return_extracted_vins():
 
 
 def return_updated_values(batch_vin_list):
-    print("Test: CI/CD!!!!!!!!!!!!!!!!!!!!!")
+    print("Test: CI")
     """
     This function takes a batch of VINs and retrieves their corresponding
     vehicle data (cylinders, drive type, fuel type, make, vehicle type)
