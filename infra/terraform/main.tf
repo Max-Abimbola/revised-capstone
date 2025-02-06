@@ -116,3 +116,20 @@ resource "google_project_iam_member" "cr_service_account_permissions" {
   member  = "serviceAccount:${google_service_account.all_powerful_account.email}"
   project = var.project_id
 }
+
+resource "google_cloud_run_v2_job" "cr_job" {
+  name     = "data-enrichment-job-cicd"
+  location = "europe-west2"
+  deletion_protection = false
+  project = var.project_id
+  
+  template {
+    task_count = 1 
+    template {
+
+      containers {
+        image = "europe-west2-docker.pkg.dev/dt-maxa-sandbox-dev/cloud-run-repo/data-enrichment:latest"
+      }
+    }
+  }
+}
